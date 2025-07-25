@@ -1,61 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive PDF Flipbook</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive PDF Flipbook</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- jQuery and Turn.js -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4/turn.min.js"></script>
 </head>
 <body>
-    <!-- Loading screen -->
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>Loading flipbook...</p>
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Loading flipbook...</p>
+  </div>
+
+  <div id="flipbook-container">
+    <div id="controls">
+      <button id="fullscreen-btn" title="Toggle Fullscreen">
+        <span class="fullscreen-icon">⛶</span>
+      </button>
+      <div id="page-info">
+        <span id="current-page">1</span> / <span id="total-pages">0</span>
+      </div>
     </div>
+    <div id="flipbook"></div>
+  </div>
 
-    <!-- Main flipbook container -->
-    <div id="flipbook-container">
-        <!-- Controls -->
-        <div id="controls">
-            <button id="fullscreen-btn" title="Toggle Fullscreen">
-                <span class="fullscreen-icon">⛶</span>
-            </button>
-            <div id="page-info">
-                <span id="current-page">1</span> / <span id="total-pages">11</span>
-            </div>
-        </div>
-
-        <!-- Flipbook -->
-        <div id="flipbook">
-            <!-- Pages will be dynamically loaded here -->
-        </div>
-
-        <!-- Navigation hints -->
-        <div id="nav-hints">
-            <div class="hint left-hint">← Previous</div>
-            <div class="hint right-hint">Next →</div>
-        </div>
-    </div>
-
-    <!-- Instructions modal -->
-    <div id="instructions" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>How to Navigate</h2>
-            <ul>
-                <li><strong>Keyboard:</strong> Use Left/Right arrow keys</li>
-                <li><strong>Mouse:</strong> Click on page edges or drag pages</li>
-                <li><strong>Touch:</strong> Swipe left/right on mobile devices</li>
-                <li><strong>Fullscreen:</strong> Click the fullscreen button (⛶)</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Help button -->
-    <button id="help-btn" title="Show Instructions">?</button>
-
-    <!-- CDN Scripts -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
