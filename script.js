@@ -1,76 +1,81 @@
-// Flipbook initialization with Turn.js
+// Initialize the flipbook with Turn.js
 
 const CONFIG = {
-    pagesFolder: 'pages/',
-    imageFormat: 'jpg'
+  pagesFolder: 'pages/',
+  imageFormat: 'jpg'
 };
 
-let totalPages = 0;
+function loadPages() {
+  const flipbook = $('#flipbook');
+  flipbook.empty();
+  let pageCount = 0;
 
-// Detect total pages by counting images in pages folder (static known count)
-const pageImages = [
-    'page1.jpg','page2.jpg','page3.jpg','page4.jpg','page5.jpg','page6.jpg','page7.jpg','page8.jpg','page9.jpg','page10.jpg','page11.jpg'
-];
-totalPages = pageImages.length;
+  // Dynamically load all page images (page1.jpg, page2.jpg, ...)
+  for (let i = 1; i <= 50; i++) {
+    let imgPath = `${CONFIG.pagesFolder}page${i}.${CONFIG.imageFormat}`;
+    let img = new Image();
+    img.src = imgPath;
+    img.onload = () => {
+      const pageDiv = $('<div />', { 'class': 'page' }).append($(img));
+      flipbook.append(pageDiv);
+      pageCount++;
+      $('#total-pages').text(pageCount);
 
-// Update total pages display
-document.getElementById('total-pages').textContent = totalPages;
+      // Initialize Turn.js after first load
+      if (pageCount === 1) initTurn();
+    };
+    img.onerror = () => {
+      if (i === 1 && pageCount === 0) {
+        console.error('No pages found in pages folder.');
+      }
+    };
+  }
+}
 
-// Load pages dynamically
-const flipbook = document.getElementById('flipbook');
-pageImages.forEach((img, index) => {
-    const div = document.createElement('div');
-    div.classList.add('page');
-    const image = document.createElement('img');
-    image.src = CONFIG.pagesFolder + img;
-    image.alt = `Page ${index + 1}`;
-    div.appendChild(image);
-    flipbook.appendChild(div);
-});
+function initTurn() {
+  $('#flipbook').turn({
+    width: $('#flipbook').width(),
+    height: $('#flipbook').height(),
+    autoCenter: true
+  });
 
-// Wait for DOM ready
+  $('#loading').fadeOut();
+
+  $('#flipbook').bind('turned', function (e, page) {
+    $('#current-page').text(page);
+  });
+
+  // Keyboard navigation
+  $(document).keydown(function (e) {
+    if (e.key === 'ArrowRight') $('#flipbook').turn('next');
+    if (e.key === 'ArrowLeft') $('#flipbook').turn('previous');
+  });
+
+  // Fullscreen button
+  $('#fullscreen-btn').click(() => {
+    const elem = document.getElementById('flipbook-container');
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+  });
+
+  // Swipe gestures
+  let startX = 0;
+  const flipbookElem = document.getElementById('flipbook');
+  flipbookElem.addEventListener('touchstart', (e) => {
+    startX = e.changedTouches[0].screenX;
+  });
+  flipbookElem.addEventListener('touchend', (e) => {
+    let endX = e.changedTouches[0].screenX;
+    if (startX - endX > 50) $('#flipbook').turn('next');
+    if (endX - startX > 50) $('#flipbook').turn('previous');
+  });
+}
+
 $(document).ready(function () {
-    $('#flipbook').turn({
-        width: $('#flipbook').width(),
-        height: $('#flipbook').height(),
-        autoCenter: true
-    });
-
-    $('#loading').fadeOut();
-
-    // Update current page on turning
-    $('#flipbook').bind('turned', function (e, page) {
-        document.getElementById('current-page').textContent = page;
-    });
-
-    // Keyboard navigation
-    $(document).keydown(function (e) {
-        if (e.key === 'ArrowRight') $('#flipbook').turn('next');
-        if (e.key === 'ArrowLeft') $('#flipbook').turn('previous');
-    });
-
-    // Fullscreen button
-    document.getElementById('fullscreen-btn').addEventListener('click', () => {
-        const elem = document.getElementById('flipbook-container');
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-    });
-
-    // Swipe gestures for mobile
-    let startX = 0;
-    flipbook.addEventListener('touchstart', (e) => {
-        startX = e.changedTouches[0].screenX;
-    });
-
-    flipbook.addEventListener('touchend', (e) => {
-        let endX = e.changedTouches[0].screenX;
-        if (startX - endX > 50) $('#flipbook').turn('next');
-        if (endX - startX > 50) $('#flipbook').turn('previous');
-    });
+  loadPages();
 });
 
-// Responsive resizing
 window.addEventListener('resize', () => {
-    $('#flipbook').turn('size', $('#flipbook').width(), $('#flipbook').height());
+  $('#flipbook').turn('size', $('#flipbook').width(), $('#flipbook').height());
 });
