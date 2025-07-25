@@ -14,65 +14,46 @@
       height: 100vh;
     }
     #flipbook {
-      width: 80%;
-      height: 90vh;
-      background: #fff;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      overflow: hidden;
+      width: 800px;
+      height: 500px;
     }
-    canvas {
+    #flipbook .page {
       width: 100%;
-      height: auto;
-      display: block;
+      height: 100%;
     }
-    .page {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      page-break-after: always;
+    #flipbook img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
-  <div id="flipbook"></div>
+  <div id="flipbook">
+    <div class="page"><img src="pages/page1.jpg" alt="Page 1"></div>
+    <div class="page"><img src="pages/page2.jpg" alt="Page 2"></div>
+    <div class="page"><img src="pages/page3.jpg" alt="Page 3"></div>
+    <div class="page"><img src="pages/page4.jpg" alt="Page 4"></div>
+    <div class="page"><img src="pages/page5.jpg" alt="Page 5"></div>
+    <div class="page"><img src="pages/page6.jpg" alt="Page 6"></div>
+    <div class="page"><img src="pages/page7.jpg" alt="Page 7"></div>
+    <div class="page"><img src="pages/page8.jpg" alt="Page 8"></div>
+    <div class="page"><img src="pages/page9.jpg" alt="Page 9"></div>
+    <div class="page"><img src="pages/page10.jpg" alt="Page 10"></div>
+    <div class="page"><img src="pages/page11.jpg" alt="Page 11"></div>
+  </div>
 
+  <!-- jQuery and Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4/turn.min.js"></script>
 
   <script>
-    const url = 'sample.pdf'; // Replace with your PDF file
-    const flipbook = document.getElementById('flipbook');
-
-    pdfjsLib.getDocument(url).promise.then(pdf => {
-      const totalPages = pdf.numPages;
-      let pagesLoaded = 0;
-
-      for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-        pdf.getPage(pageNum).then(page => {
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          const viewport = page.getViewport({ scale: 2 });
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          page.render({ canvasContext: context, viewport }).promise.then(() => {
-            const pageDiv = document.createElement('div');
-            pageDiv.classList.add('page');
-            pageDiv.appendChild(canvas);
-            flipbook.appendChild(pageDiv);
-
-            pagesLoaded++;
-            if (pagesLoaded === totalPages) {
-              $('#flipbook').turn({
-                width: '100%',
-                height: '90vh',
-                autoCenter: true
-              });
-            }
-          });
-        });
-      }
+    $(document).ready(function() {
+      $("#flipbook").turn({
+        width: 800,
+        height: 500,
+        autoCenter: true
+      });
     });
   </script>
 </body>
