@@ -12,10 +12,12 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      flex-direction: column;
     }
     #flipbook {
-      width: 800px;
-      height: 500px;
+      width: 90vw;
+      height: 70vh;
+      margin-bottom: 10px;
     }
     #flipbook .page {
       width: 100%;
@@ -25,6 +27,18 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    #fullscreenBtn {
+      padding: 8px 16px;
+      font-size: 16px;
+      background: #444;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #fullscreenBtn:hover {
+      background: #666;
     }
   </style>
 </head>
@@ -42,19 +56,74 @@
     <div class="page"><img src="pages/page10.jpg" alt="Page 10"></div>
     <div class="page"><img src="pages/page11.jpg" alt="Page 11"></div>
   </div>
+  <button id="fullscreenBtn">Fullscreen</button>
 
   <!-- jQuery and Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4/turn.min.js"></script>
-
+  
   <script>
+    function resizeFlipbook() {
+      const width = document.getElementById('flipbook').clientWidth;
+      const height = document.getElementById('flipbook').clientHeight;
+      $("#flipbook").turn("size", width, height);
+    }
+
     $(document).ready(function() {
       $("#flipbook").turn({
-        width: 800,
-        height: 500,
+        width: document.getElementById('flipbook').clientWidth,
+        height: document.getElementById('flipbook').clientHeight,
         autoCenter: true
       });
+      window.addEventListener('resize', resizeFlipbook);
     });
+
+    // Fullscreen logic
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const flipbook = document.getElementById("flipbook");
+
+    fullscreenBtn.addEventListener("click", () => {
+      if (flipbook.requestFullscreen) {
+        flipbook.requestFullscreen();
+      } else if (flipbook.webkitRequestFullscreen) { /* Safari */
+        flipbook.webkitRequestFullscreen();
+      } else if (flipbook.msRequestFullscreen) { /* IE11 */
+        flipbook.msRequestFullscreen();
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowRight") {
+        $("#flipbook").turn("next");
+      } else if (event.key === "ArrowLeft") {
+        $("#flipbook").turn("previous");
+      }
+    });
+
+    // Swipe gesture for mobile
+    let startX = 0;
+    let endX = 0;
+
+    flipbook.addEventListener('touchstart', function(e) {
+      startX = e.changedTouches[0].screenX;
+    });
+
+    flipbook.addEventListener('touchend', function(e) {
+      endX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      const diff = startX - endX;
+      if (Math.abs(diff) > 50) { // swipe threshold
+        if (diff > 0) {
+          $("#flipbook").turn("next");
+        } else {
+          $("#flipbook").turn("previous");
+        }
+      }
+    }
   </script>
 </body>
 </html>
