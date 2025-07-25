@@ -1,129 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Flipbook</title>
-  <style>
-    body {
-      margin: 0;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
-    #flipbook {
-      width: 90vw;
-      height: 70vh;
-      margin-bottom: 10px;
-    }
-    #flipbook .page {
-      width: 100%;
-      height: 100%;
-    }
-    #flipbook img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #fullscreenBtn {
-      padding: 8px 16px;
-      font-size: 16px;
-      background: #444;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    #fullscreenBtn:hover {
-      background: #666;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive PDF Flipbook</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="flipbook">
-    <div class="page"><img src="pages/page1.jpg" alt="Page 1"></div>
-    <div class="page"><img src="pages/page2.jpg" alt="Page 2"></div>
-    <div class="page"><img src="pages/page3.jpg" alt="Page 3"></div>
-    <div class="page"><img src="pages/page4.jpg" alt="Page 4"></div>
-    <div class="page"><img src="pages/page5.jpg" alt="Page 5"></div>
-    <div class="page"><img src="pages/page6.jpg" alt="Page 6"></div>
-    <div class="page"><img src="pages/page7.jpg" alt="Page 7"></div>
-    <div class="page"><img src="pages/page8.jpg" alt="Page 8"></div>
-    <div class="page"><img src="pages/page9.jpg" alt="Page 9"></div>
-    <div class="page"><img src="pages/page10.jpg" alt="Page 10"></div>
-    <div class="page"><img src="pages/page11.jpg" alt="Page 11"></div>
-  </div>
-  <button id="fullscreenBtn">Fullscreen</button>
+    <!-- Loading screen -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading flipbook...</p>
+    </div>
 
-  <!-- jQuery and Turn.js -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4/turn.min.js"></script>
-  
-  <script>
-    function resizeFlipbook() {
-      const width = document.getElementById('flipbook').clientWidth;
-      const height = document.getElementById('flipbook').clientHeight;
-      $("#flipbook").turn("size", width, height);
-    }
+    <!-- Main flipbook container -->
+    <div id="flipbook-container">
+        <!-- Controls -->
+        <div id="controls">
+            <button id="fullscreen-btn" title="Toggle Fullscreen">
+                <span class="fullscreen-icon">⛶</span>
+            </button>
+            <div id="page-info">
+                <span id="current-page">1</span> / <span id="total-pages">11</span>
+            </div>
+        </div>
 
-    $(document).ready(function() {
-      $("#flipbook").turn({
-        width: document.getElementById('flipbook').clientWidth,
-        height: document.getElementById('flipbook').clientHeight,
-        autoCenter: true
-      });
-      window.addEventListener('resize', resizeFlipbook);
-    });
+        <!-- Flipbook -->
+        <div id="flipbook">
+            <!-- Pages will be dynamically loaded here -->
+        </div>
 
-    // Fullscreen logic
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    const flipbook = document.getElementById("flipbook");
+        <!-- Navigation hints -->
+        <div id="nav-hints">
+            <div class="hint left-hint">← Previous</div>
+            <div class="hint right-hint">Next →</div>
+        </div>
+    </div>
 
-    fullscreenBtn.addEventListener("click", () => {
-      if (flipbook.requestFullscreen) {
-        flipbook.requestFullscreen();
-      } else if (flipbook.webkitRequestFullscreen) { /* Safari */
-        flipbook.webkitRequestFullscreen();
-      } else if (flipbook.msRequestFullscreen) { /* IE11 */
-        flipbook.msRequestFullscreen();
-      }
-    });
+    <!-- Instructions modal -->
+    <div id="instructions" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>How to Navigate</h2>
+            <ul>
+                <li><strong>Keyboard:</strong> Use Left/Right arrow keys</li>
+                <li><strong>Mouse:</strong> Click on page edges or drag pages</li>
+                <li><strong>Touch:</strong> Swipe left/right on mobile devices</li>
+                <li><strong>Fullscreen:</strong> Click the fullscreen button (⛶)</li>
+            </ul>
+        </div>
+    </div>
 
-    // Keyboard navigation
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "ArrowRight") {
-        $("#flipbook").turn("next");
-      } else if (event.key === "ArrowLeft") {
-        $("#flipbook").turn("previous");
-      }
-    });
+    <!-- Help button -->
+    <button id="help-btn" title="Show Instructions">?</button>
 
-    // Swipe gesture for mobile
-    let startX = 0;
-    let endX = 0;
-
-    flipbook.addEventListener('touchstart', function(e) {
-      startX = e.changedTouches[0].screenX;
-    });
-
-    flipbook.addEventListener('touchend', function(e) {
-      endX = e.changedTouches[0].screenX;
-      handleSwipe();
-    });
-
-    function handleSwipe() {
-      const diff = startX - endX;
-      if (Math.abs(diff) > 50) { // swipe threshold
-        if (diff > 0) {
-          $("#flipbook").turn("next");
-        } else {
-          $("#flipbook").turn("previous");
-        }
-      }
-    }
-  </script>
+    <!-- CDN Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3.0.2/turn.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
